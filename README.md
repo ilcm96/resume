@@ -55,3 +55,47 @@
 | dku-aegis-library-system | 개발/보안 중앙동아리 Aegis 도서관리 시스템 구축 공모전 시상작                                       | Golang, PostgreSQL, Redis, MinIO, Docker | [dku-aegis-library-system](https://github.com/ilcm96/dku-aegis-library-system) |
 | dku-library-seat         | 단국대학교 도서관 열람실 좌석 실시간/과거 사용률 조회 서비스                                        | JS, Cloudflare Workers, Cloudflare D1    | [dku-library-seat](https://github.com/ilcm96/dku-library-seat)                 |
 | gh-copilot-proxy         | GitHub Copilot Chat API를 개인 엑세스 토큰 기반으로 사용할 수 있도록 하는 가벼운 Golang 프록시 서버 | Golang, Docker                           | [gh-copilot-proxy](https://github.com/ilcm96/gh-copilot-proxy)                 |
+
+## 🚀 Projects
+
+### aegis-web
+
+2024년 Aegis 서버장으로 활동하며 동아리 운영의 비효율을 느꼈고, 이를 해소하기 위해 2025년 Aegis 회장으로 선출된 후 개발팀을 창설하였습니다.  
+현재까지 약 11개월간 Aegis 회장 및 개발팀장으로 활동하며 회원 가입 자동화 프로젝트 aegis-join을 시작으로 aegis-mypage, aegis-adminpage, aegis-study 등 동아리 운영에 필요한 다양한 내부 시스템을 기획, 개발, 배포, 운영하고 있습니다.  
+기획자로써 aegis-web의 모든 서비스를 기획하고, 백엔드 엔지니어로써 플랫폼 서버, [aegis-server](https://github.com/dkuaegis/aegis-server)를 개발하고 있으며, 인프라 엔지니어로써 aegis-web의 모든 서비스를 Oracle Cloud에 배포하고 Grafana Cloud를 통한 모니터링을 담당하고 있습니다.
+
+| 서비스                                      | 링크                                                           |
+| ------------------------------------------- | -------------------------------------------------------------- |
+| 플랫폼 서버                                 | [aegis-server](https://github.com/dkuaegis/aegis-server)       |
+| 회원 가입 서비스                            | [aegis-join](https://github.com/dkuaegis/aegis-join)           |
+| 스터디 등록/관리 서비스                     | [aegis-study](https://github.com/dkuaegis/aegis-study)         |
+| 마이페이지(포인트, 쿠폰 조회, QR 코드 전시) | [aegis-mypage](https://github.com/dkuaegis/aegis-mypage)       |
+| 관리자 서비스                               | [aegis-adminpage](https://github.com/dkuaegis/aegis-adminpage) |
+
+### 1. 회원가입 시스템 - aegis-join
+
+신규 회원의 개인정보 입력부터 디스코드 연동, 회비 납부 확인, 구글 시트 적재까지의 모든 가입 절차를 자동화한 시스템입니다.
+
+- **문제:** 매 학기 100명 이상의 신입 부원을 수동으로 처리하며 운영진의 행정력(학기당 15시간 이상)이 낭비되었고, 부원들은 가입 승인까지 최대 1일을 기다려야 했습니다. 사업자 등록 문제로 일반 결제(PG) 시스템 도입도 불가능했습니다.
+- **해결:** **은행 앱의 입출금 알림을 감지**하여 서버로 전송하는 독자적인 파이프라인을 구축, **가입 절차를 100% 자동화**하고 대기 시간을 **0분**으로 단축시켰습니다. 1학기 동안 178명의 가입을 **장애 없이(가동률 100%)** 처리했습니다.
+
+- **문제:** **Observability** 플랫폼 분석 결과, 기획 초기 도입했던 '에브리타임 시간표' 제출 기능이 사용자 경험을 저해하고, 가입 완료 후 구글 시트 연동 과정이 병목을 일으켜 사용자 피드백 속도를 저해했습니다.
+- **해결:** 데이터에 기반하여 '에브리타임' 기능을 과감히 삭제하고, 구글 시트 연동 로직을 **비동기(Asynchronous) 처리**로 변경하여 시스템의 응답 속도와 사용자 경험을 향상시켰습니다.
+
+### 2. QR 코드 기반 포인트 시스템 - aegis-mypage, aegis-adminpage
+
+동아리 활동 참여에 따른 포인트 적립 및 쿠폰 교환을 지원하는 시스템으로, 부원들의 활동 참여를 독려하고 운영진의 데이터 기반 의사결정을 지원합니다.
+
+- **문제:** 기존 구글폼 기반의 참여 신청은 실제 출석 여부와 불일치하여 데이터 신뢰성이 낮았고, 대리 출석을 방지할 수단이 필요했습니다.
+- **해결:** 일반적인 방식(운영진이 QR 제시)과 반대로, 부원이 **개인별 고유 QR코드를 제시**하고 운영진이 이를 리더기로 스캔하는 방식을 채택했습니다. 이를 통해 대리 출석을 방지하고 **스캔 즉시 포인트가 자동 적립**되도록 시스템을 설계했습니다.
+- **성과:** 부원들에게는 활동에 대한 투명한 기록과 보상으로 성취감을 제공하고, 운영진은 수작업 집계 부담 없이 축적된 데이터를 통해 **활동 호응도를 객관적으로 분석**하여 향후 기획에 활용할 수 있게 되었습니다.
+
+### 3. 스터디 관리 시스템 - aegis-study
+
+동아리 내 다양한 스터디의 생성, 가입, 출석 관리, 포인트 지급을 지원하는 플랫폼입니다.
+
+- **문제:** 선착순 스터디 모집 시, 다수의 사용자가 동시에 가입을 요청할 때 발생하는 **동시성(Concurrency) 문제**로 데이터 일관성이 깨질 위험이 있었습니다.
+- **해결:** **비관적 락(Pessimistic Lock)** 을 도입하여, 동시 가입 요청이 발생하더라도 데이터의 정합성을 보장하고 안정적으로 스터디 가입 처리가 가능하도록 구현했습니다.
+
+- **문제:** 스터디 참여 및 완료에 따른 포인트를 지급할 때, 네트워크 오류나 재시도 등으로 인해 포인트가 중복 적립될 수 있는 위험이 있었습니다.
+- **해결:** **멱등키(Idempotency Key) 기반**으로 포인트 적립 시스템을 구현하여, 동일한 요청이 중복 발생하더라도 정확히 한 번만 처리되도록 보장했습니다.
