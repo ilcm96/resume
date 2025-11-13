@@ -99,3 +99,12 @@
 
 - **문제:** 스터디 참여 및 완료에 따른 포인트를 지급할 때, 네트워크 오류나 재시도 등으로 인해 포인트가 중복 적립될 수 있는 위험이 있었습니다.
 - **해결:** **멱등키(Idempotency Key) 기반**으로 포인트 적립 시스템을 구현하여, 동일한 요청이 중복 발생하더라도 정확히 한 번만 처리되도록 보장했습니다.
+
+## 🛠️ Skills
+
+- Programming Languages: Java, Go, Python, JavaScript/TypeScript
+- Frameworks & Libraries: Spring Boot, Echo, FastAPI, React
+- Databases: PostgreSQL, MySQL, MongoDB, Redis
+- Cloud & Infrastructure: AWS, GCP, Oracle Cloud, Cloudflare, Docker, Kubernetes
+- Observability: Grafana, Prometheus, Loki, Tempo, Alloy
+- LLM & AI: Claude Code, OpenAI Codex, Spring AI, LangChain4j, Eino, RAG
